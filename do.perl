@@ -83,33 +83,32 @@ sub compare {
 
 while( my $line = <$info>)  {
     $line =~ tr/\n//d;
-    my @words = split /;/, $line;
-    my %all_cards = ();
-    my @player_cards = ();
-    my $user_idx = 0;
-    my $error = 0;
     $total_line += 1;
-    foreach (@words) {
-        my %cards = ();
-        while ( $_ =~ /([DHSC]{1}([2-9AJQK]|10){1})/g ) {
-            $cards{$1} = $2;
-            $all_cards{$1} = $2;
-        }
-        if ((my $size = keys %cards) != CARDS_CNT) {$error = 1;}
-        $player_cards[$user_idx++] = \%cards;
-    }
-    if ((my $all_size = keys %all_cards) != 2 * CARDS_CNT) {$error = 1;}
-    $error_count += $error;
-
-    if ($error == 0) {
-        $win_count += compare @player_cards;
+    if ($line !~ /^(([DHSC]{1}([2-9AJQK]|10){1}){5};([DHSC]{1}([2-9AJQK]|10){1}){5}){1}$/g) {
+        $error_count += 1;
     } else {
-        print $line . "\n"
+        my %all_cards = ();
+        my @words = split /;/, $line;
+        my @player_cards = ();
+        my $user_idx = 0;
+        foreach (@words) {
+            my %cards = ();
+            while ( $_ =~ /([DHSC]{1}([2-9AJQK]|10){1})/g ) {
+                $cards{$1} = $2;
+                $all_cards{$1} = $2;
+            }
+            $player_cards[$user_idx++] = \%cards;
+        }
+        if ((my $all_size = keys %all_cards) != 2 * CARDS_CNT) {
+            $error_count += 1;
+        } else {
+            $win_count += compare @player_cards;
+        }
     }
-    
 }
 my $player1_win_count = $total_line - $win_count - $error_count;
 print "Leon win: $win_count\n";
 print "Judy win: $player1_win_count\n";
 print "Error records count: $error_count\n";
 close $info;
+    
