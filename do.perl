@@ -4,8 +4,10 @@ use warnings;
 use Math::Combinatorics;
 use List::Util qw(sum);
 use constant CARDS_CNT => 5;
+
 my $file = 'LJ-poker.txt';
 open my $info, $file or die "Could not open $file: $!";
+
 my $error_count = 0;
 my $win_count = 0;
 my $total_line = 0;
@@ -27,9 +29,8 @@ sub user_score {
             my $c52 = $total - $_;
             if ( $c52 <= 10) {
                 return $c52;
-            } else {
-                return $c52 - 10
             }
+            return $c52 - 10;
         }
     }
     return 0;
@@ -74,9 +75,7 @@ sub compare {
     if ($score_0 > $score_1) { return 1; }
     if ($score_0 == $score_1) {
         my $new_max = max_card ($max_0, $max_1);
-        if ($new_max eq $max_0) {
-            return 1
-        }
+        if ($new_max eq $max_0) { return 1; }
     }
     return 0;
 }
@@ -111,4 +110,3 @@ print "Leon win: $win_count\n";
 print "Judy win: $player1_win_count\n";
 print "Error records count: $error_count\n";
 close $info;
-    
